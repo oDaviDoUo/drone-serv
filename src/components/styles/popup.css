@@ -1,12 +1,144 @@
 /* popup,css */
 .leaflet-popup.plane-popup .leaflet-popup-content-wrapper {
-  background-color: rgba(51, 51, 51, 0.75);
-  color: #fff;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  background-color: rgba(51, 51, 51, 0.75) !important;
+  backdrop-filter: blur(4px);
+  color: #fff !important;
+  border-radius: 0.65rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  font-family: var(--font-jura, sans-serif) !important;
 }
 
+/* Стилизуем треугольник (носик) попапа */
 .leaflet-popup.plane-popup .leaflet-popup-tip {
-  background-color: rgba(30, 41, 59, 0.9);
+  background-color: rgba(51, 51, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+.leaflet-popup.station-popup .leaflet-popup-content-wrapper {
+  background-color: rgba(51, 51, 51, 0.75) !important;
+  backdrop-filter: blur(4px);
+  color: #fff !important;
+  border-radius: 0.65rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+  font-family: var(--font-jura, sans-serif) !important;
+}
+
+/* Стилизуем треугольник (носик) попапа */
+.leaflet-popup.station-popup .leaflet-popup-tip {
+  background-color: rgba(51, 51, 51, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Убираем стандартную кнопку закрытия или красим её в белый */
+.leaflet-popup.station-popup .leaflet-popup-close-button {
+  color: #fff !important;
+  padding: 8px 8px 0 0 !important;
+}
+
+
+/* globals.css */
+
+.custom-station-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-station-marker .marker-pin::after,
+.custom-station-marker .marker-pin::before {
+  content: none !important;
+  display: none !important;
+  border: none !important;
+}
+
+.marker-pin {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  
+  transition: all 0.2s ease-in-out;
+}
+
+
+/* Эффект при наведении */
+.custom-station-marker:hover .marker-pin {
+  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  z-index: 1000;
+}
+
+/* Анимация пульсации для ERROR статуса (более мягкая) */
+.marker-pulse {
+  animation: glass-pulse 2s infinite;
+}
+
+@keyframes glass-pulse {
+  0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.5); }
+  70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0); }
+}
+
+.marker-pin.active-station {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Пульсирующее кольцо вокруг активной станции */
+.active-ring {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  animation: active-pulse 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes active-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+
+
+.drone-marker-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drone-pin {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  background-color: rgba(51, 51, 51, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  box-shadow: 0 0 15px rgba(51, 51, 51, 0.4);
+}
+
+.drone-marker-container::after {
+  content: none !important;
+}
+

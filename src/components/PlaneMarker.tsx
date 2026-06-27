@@ -1,103 +1,97 @@
-// PlaneMarker.tsx
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+"use client";
+import React, { useEffect, useRef, useMemo } from 'react'
 import { Marker, Popup } from 'react-leaflet'
 import L from 'leaflet'
-import { useMissionStore } from '../store/missionStore'
-import { Button } from '@/components/ui/button'
-import * as turf from '@turf/turf'
+import { renderToString } from 'react-dom/server'
+import { Drone, Gauge, MapPin, BatteryFull, ArrowUpNarrowWide, Circle, Activity } from 'lucide-react'
+import { useTelemetryStore } from '../store/useTelemetryStore' 
 import '../components/styles/popup.css'
 
-// Иконка самолета
-const planeIcon = L.divIcon({
-  className: 'plane-marker-icon',
-  html: `✈️`,
-  iconSize: [24, 24],
-  iconAnchor: [12, 12],
-})
+interface PlaneMarkerProps {
+  droneId?: string; 
+}
 
-export function PlaneMarker() {
-  const points = useMissionStore((s) => s.points)
-  const [progress, setProgress] = useState(0)
-  const rafRef = useRef<number | null>(null)
+export function PlaneMarker({ droneId = "57c31257-f0a4-41a4-b825-eb0aef0c83a6" }: PlaneMarkerProps) {
+  const markerRef = useRef<L.Marker>(null)
 
-  const pathLine = useMemo(() => {
-    if (points.length < 2) return null
-    const coords = points.map((p) => [p.lng, p.lat])
-    return turf.lineString(coords)
-  }, [points])
+  const telemetry = useTelemetryStore((s) => s.drones[droneId]);
 
   useEffect(() => {
-    if (!pathLine) {
-      setProgress(0)
-      return
-    }
-
-    const totalDurationMs = 100000 
-    let startTime: number | null = null
-
-    const step = (timestamp: number) => {
-      if (startTime === null) {
-        startTime = timestamp
-      }
-
-      const elapsedTime = timestamp - startTime
-      let newProgress = elapsedTime / totalDurationMs
-
-      if (newProgress >= 1) {
-        newProgress = 0 // Зацикливаем
-        startTime = timestamp // Начинаем заново
-      }
+    if (telemetry && markerRef.current) {
+      const newLatLng = new L.LatLng(telemetry.lat, telemetry.lng);
+      markerRef.current.setLatLng(newLatLng);
       
-      setProgress(newProgress)
-      rafRef.current = requestAnimationFrame(step)
+      // Опционально: если хочешь, чтобы карта следовала за дроном, раскомментируй:
+      // markerRef.current._map.panTo(newLatLng); 
     }
+  }, [telemetry]); 
 
-    rafRef.current = requestAnimationFrame(step)
+  const droneIcon = useMemo(() => {
+    const iconHTML = renderToString(
+      <div className="drone-pin">
+        <Drone size={20} color="white" />
+      </div>
+    )
+    return L.divIcon({
+      className: 'drone-marker-container',
+      html: iconHTML,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+      popupAnchor: [0, -20]
+    })
+  }, [])
 
-    // Очистка при размонтировании компонента
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-      }
-    }
-  }, [pathLine]) // Перезапускаем анимацию, если путь (pathLine) изменился
-
-  // 3. Вычисляем текущую позицию на основе прогресса
-  const currentPos = useMemo(() => {
-    if (!pathLine) return null
-
-    // turf.along() берет линию и дистанцию
-    const totalDistance = turf.length(pathLine, { units: 'kilometers' })
-    const currentDistance = totalDistance * progress
-    
-    const pointOnLine = turf.along(pathLine, currentDistance, { units: 'kilometers' })
-
-    // turf.along() возвращает [lng, lat]
-    const [lng, lat] = pointOnLine.geometry.coordinates
-    
-    // Leaflet <Marker> хочет [lat, lng]
-    return [lat, lng] as [number, number] 
-  }, [pathLine, progress]) // Пересчитываем, только если изменился путь или прогресс
-
-  // 4. Рендерим обычный <Marker> в этой точке
-  if (!currentPos) {
-    return null // Не рендерим, если нет пути
-  }
+  // Если данных нет, не рендерим маркер (или рендерим в дефолтной позиции 0,0)
+  if (!telemetry) return null;
 
   return (
-    <Marker
-      position={currentPos}
-      icon={planeIcon}
-    >
-      <Popup className="plane-popup" autoClose={false}>
-        <div className="w-48">
-          <h4 className="font-semibold">Дрон "Альфа"</h4>
-          <div className="text-sm">Скорость: 12 м/с</div>
-          <div className="text-sm">Высота: 45 м</div>
-          <div className="text-sm">Батарея: 78%</div>
-          <Button size="sm" className="mt-2 w-full" style={{borderRadius: 20,  backgroundColor: '#4AA8F0'}}>
-            Смотреть видео
-          </Button>
+    <Marker position={[telemetry.lat, telemetry.lng]} icon={droneIcon} ref={markerRef}>
+      <Popup className="plane-popup" autoClose={false} closeButton={false}>
+        <div className="min-w-[140px] font-jura">
+          <div className='flex gap-2 items-center mb-2 border-b border-white/20 pb-1'>
+            <h4 className='text-lg font-bold'>Drone Alpha</h4>
+            <Circle 
+              color={telemetry.status === 'FLYING' ? '#22c55e' : '#eab308'} 
+              fill={telemetry.status === 'FLYING' ? '#22c55e' : '#eab308'} 
+              size={10} 
+              className="animate-pulse"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-y-3 gap-x-1">
+            
+            {/* Скорость */}
+            <div className="flex items-center gap-2">
+              <Gauge size={16} className='text-blue-400'/>
+              <div className="text-xs">{telemetry.speed.toFixed(1)} m/s</div>
+            </div>
+
+            {/* Высота */}
+            <div className="flex items-center gap-2">
+              <ArrowUpNarrowWide size={16} className='text-blue-400'/>
+              <div className="text-xs">{telemetry.altitude.toFixed(0)} m</div>
+            </div>
+
+            {/* Статус (вместо номера точки, так как мы не знаем текущую точку из сырой телеметрии) */}
+            <div className="flex items-center gap-2">
+              <Activity size={16} className='text-blue-400'/>
+              <div className="text-xs">{telemetry.status}</div>
+            </div>
+
+            {/* Батарея */}
+            <div className="flex items-center gap-2">
+              <BatteryFull 
+                size={16} 
+                className={telemetry.battery < 20 ? 'text-red-500' : 'text-green-400'}
+              />
+              <div className="text-xs font-bold">{telemetry.battery}%</div>
+            </div>
+
+            {/* Координаты (для дебага можно вывести) */}
+            <div className="col-span-2 text-[10px] text-gray-400 mt-1">
+              {telemetry.lat.toFixed(5)}, {telemetry.lng.toFixed(5)}
+            </div>
+
+          </div>
         </div>
       </Popup>
     </Marker>

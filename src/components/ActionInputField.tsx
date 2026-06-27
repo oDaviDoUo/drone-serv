@@ -53,14 +53,14 @@ const ActionInputField: React.FC<ActionInputFieldProps> = memo(({
                     onChange={onChange}
                     onBlur={onBlur}
                     className={cn(
-                        "bg-neutral-100/10 border h-8 text-sm pr-10",
+                        "bg-neutral-100/10 border-neutral-100/35  h-8 text-sm pr-10",
                         isError && 'border-red-500 ring-red-500',
                         unit === 'м/с' && 'pr-12' 
                     )}
                     placeholder={placeholder}
                     type="text"
                 />
-                {unit && <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-white/50">{unit}</span>}
+                {unit && <span className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-neutral-300">{unit}</span>}
             </div>
         </div>
     );

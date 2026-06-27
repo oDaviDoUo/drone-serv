@@ -29,7 +29,6 @@ type ActionCardProps = {
     isError: (key: string) => boolean;
 }
 
-// ⚠️ Утилита для получения заголовка (можно вынести в отдельный файл или использовать enum)
 const getActionTitle = (type: ActionType): string => {
     switch(type) {
         case 'TakePhotosByTime': return 'Съемка по времени';
@@ -74,7 +73,6 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
         handleParamChange(key, numValue);
     }
     
-    // --- ОСНОВНАЯ ЛОГИКА РЕНДЕРА ПО ТИПУ ---
     const renderActionContent = () => {
         const getParamValue = (key: string) => action.params.find(p => p.key === key)?.value ?? null;
         const isParamError = (key: string) => isError(`action-${action.id}-${key}`);
@@ -109,7 +107,6 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
                 
                 return (
                     <div className="space-y-2">
-                        
                         <RadioGroup 
                             defaultValue={mode as string} 
                             onValueChange={(v) => handleParamChange('mode', v)} 
@@ -124,8 +121,6 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
                                 <Label htmlFor={`photo-${action.id}`} className="flex items-center space-x-1 text-sm"><CameraIcon className='h-4 w-4'/> Снимки</Label>
                             </div>
                         </RadioGroup>
-
-                        {/* Угол поворота + Направление */}
                         <div className="flex items-center gap-2">
                             <div className="flex-1"> 
                                 <InputField label="Угол поворота" keyName="angle" placeholder="360" unit="°" />
@@ -133,14 +128,14 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
                                 <Button 
                                 size="icon" 
                                 onClick={() => handleParamChange('direction', 'left')}
-                                className={cn('h-8 w-8', direction === 'left' ? 'bg-blue-400' : 'bg-neutral-100/10 hover:bg-white/20')}
+                                className={cn('h-8 w-8', direction === 'left' ? 'bg-teal-600' : 'bg-neutral-100/10 hover:bg-white/20')}
                             >
                                 <RotateCcw className="h-5 w-5" />
                             </Button>
                             <Button 
                                 size="icon" 
                                 onClick={() => handleParamChange('direction', 'right')}
-                                className={cn('h-8 w-8', direction === 'right' ? 'bg-blue-400' : 'bg-neutral-100/10 hover:bg-white/20')}
+                                className={cn('h-8 w-8', direction === 'right' ? 'bg-teal-600' : 'bg-neutral-100/10 hover:bg-white/20')}
                             >
                                 <RotateCw className="h-5 w-5" />
                             </Button>
@@ -198,18 +193,15 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
     }
 
     const actionHasErrors = action.params.some(p => isError(`action-${action.id}-${p.key}`));
-    // Также проверяем специфические ошибки диапазона
     const hasRangeError = action.type === 'RotateCamera' && isError(`action-${action.id}-tilt-range`);
     const finalHasErrors = actionHasErrors || hasRangeError;
 
     return (
-        <div className={cn("bg-neutral-700/50 border border-neutral-100/35 rounded-lg p-3 space-y-3 relative", finalHasErrors ? 'border-red-400' : 'border-neutral-100/35')}>
-            
-            {/* ЗАГОЛОВОК И УПРАВЛЕНИЕ */}
+        <div className={cn("bg-neutral-700/50 border border-neutral-100/35 rounded-lg p-3 space-y-3 relative", finalHasErrors ? 'border-red-500' : 'border-neutral-100/35')}>
             <div className="flex justify-between items-start">
                 <div className="flex items-center space-x-2">
-                    <span className={cn("text-lg font-bold text-white", finalHasErrors ? 'text-red-400' : 'text-white')}>{index + 1}.</span>
-                    <h4 className={cn("text-base font-semibold", finalHasErrors ? 'text-red-400' : 'text-white')}>
+                    <span className={cn("text-lg font-bold text-white", finalHasErrors ? 'text-red-500' : 'text-white')}>{index + 1}.</span>
+                    <h4 className={cn("text-base font-semibold", finalHasErrors ? 'text-red-500' : 'text-white')}>
                         {getActionTitle(action.type)}
                     </h4>
                 </div>
@@ -237,20 +229,14 @@ export function ActionCard({ pointId, action, index, totalActions, isError }: Ac
                         size="icon" 
                         variant="ghost" 
                         onClick={() => removeAction(pointId, action.id)}
-                        className="w-6 h-6 p-0 text-red-400 hover:bg-white/10"
+                        className="w-6 h-6 p-0 text-red-500 hover:bg-red-900/20 hover:text-red-500"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
 
-            {/* КОНТЕНТ ДЕЙСТВИЯ */}
             {renderActionContent()}
         </div>
     );
 }
-
-// ⚠️ Предполагаемый cn утилита (для Tailwind-cva, если не существует, используйте простую функцию):
-// export function cn(...classes: (string | undefined | null | false)[]) {
-//     return classes.filter(Boolean).join(' ');
-// }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { ChevronDown, ChevronRight, ChevronLeft, ChevronUp } from "lucide-react";
 
 interface StickState {
   x: number;
@@ -49,7 +50,7 @@ function Joystick({
   return (
     <div
       ref={ref}
-      className="relative w-20 h-20 rounded-full bg-gray-600/50 shadow-inner flex items-center justify-center select-none"
+      className="relative w-20 h-20 rounded-full bg-neutral-100/10  shadow-inner flex items-center justify-center select-none"
     >
       <div className="absolute top-1/2 left-1/2 w-[calc(100%+10px)] h-[calc(100%+10px)] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center opacity-50">
         <div className="absolute w-1 h-1 bg-gray-300 rounded-full -top-1.5" />
@@ -63,7 +64,7 @@ function Joystick({
         transition={{ type: "spring", stiffness: 100, damping: 30 }}
         className="
             w-8 h-8 rounded-full 
-            bg-gray-300 
+            bg-neutral-100/35
             shadow-[inset_2px_2px_8px_rgba(255,255,255,0.6),_2px_2px_6px_rgba(0,0,0,0.4)] 
             flex items-center justify-center
             absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
@@ -172,10 +173,11 @@ export default function DualJoysticks() {
         -translate-x-1/2 
         w-[240px] 
         p-4 
-        bg-gray-900/50 
+        bg-neutral-800/75
         rounded-full 
         shadow-2xl 
-        backdrop-blur-sm
+        backdrop-blur-xs
+        border border-neutral-100/35
       "
       style={{ zIndex: 1000 }}
     >

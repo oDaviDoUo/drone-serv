@@ -1,17 +1,61 @@
 // src/components/PointsQuickNav.tsx (Финальная версия с исправлениями)
 import React, { useRef, useEffect, useMemo } from 'react'
 import { useMissionStore } from "@/store/missionStore"
+import { MissionPoint } from '@/lib/types'
+import L, { LatLngBounds } from 'leaflet'
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight, MapPin, AlertTriangle } from "lucide-react"
+import { Badge } from './ui/badge'
 
 // Условная ширина одной кнопки + отступ (для скролла)
 const ITEM_WIDTH = 40 + 16;
 const MAX_VISIBLE_ITEMS = 6; 
 
-export function PointsQuickNav() {
+interface PointsQuickNavProps {
+    onFlyTo: ((lat: number, lon: number) => void) | null;
+    mapBounds: LatLngBounds | null;
+}
+
+export function PointsQuickNav({ onFlyTo, mapBounds }: PointsQuickNavProps) {
   const points = useMissionStore((s) => s.points)
   const activeId = useMissionStore((s) => s.activeId)
   const setActive = useMissionStore((s) => s.setActive)
+
+  const handlePointClick = (pointId: string) => {
+    setActive(pointId); 
+    
+    const point = points.find(p => p.id === pointId);
+    if (!point) return;
+
+    if (!onFlyTo) {
+        console.warn(`[PNV] 🔴 FLYTO ERROR: Функция onFlyTo не доступна (null). Точка: ${point.name}`);
+        return;
+    }
+
+    const isVisible = isPointVisible(point);
+
+    if (isVisible) {
+        console.log(`[PNV] 🟡 FLYTO SKIP: Точка '${point.name}' (ID: ${pointId}) уже видима на карте.`);
+    } else {
+        console.log(`[PNV] 🟢 FLYTO CALL: Карта летит к точке '${point.name}' (${point.lat}, ${point.lng}).`);
+        onFlyTo(point.lat, point.lng); 
+    }
+};
+
+const isPointVisible = (point: MissionPoint) => {
+    if (!mapBounds) {
+        console.log(`[PNV] 🟡 BOUNDS ERROR: mapBounds null. Точка '${point.name}' считается видимой.`);
+        return true; 
+    }
+    
+    if (!onFlyTo) return true;
+    
+    const latLng = L.latLng(point.lat, point.lng);
+    
+    const contains = mapBounds.contains(latLng);
+  
+    return contains; 
+};
 
   const getTotalErrorCount = useMissionStore((s) => s.getTotalErrorCount)
   const getValidationErrors = useMissionStore((s) => s.getValidationErrors)
@@ -47,26 +91,43 @@ export function PointsQuickNav() {
   useEffect(() => {
     const container = pointsContainerRef.current
     if (!container || activeIndex === -1) return
-    
-    const itemPosition = activeIndex * ITEM_WIDTH
 
-    if (itemPosition < container.scrollLeft || itemPosition > container.scrollLeft + scrollableAreaWidth - ITEM_WIDTH) {
-      
+    const itemStart = activeIndex * ITEM_WIDTH
+    const itemEnd = itemStart + ITEM_WIDTH
+
+    const viewStart = container.scrollLeft
+    const viewEnd = viewStart + scrollableAreaWidth
+
+    if (itemStart >= viewStart && itemEnd <= viewEnd) {
+      return
+    }
+
+    // Точка левее видимой области
+    if (itemStart < viewStart) {
       container.scrollTo({
-        left: itemPosition,
-        behavior: 'smooth'
+        left: itemStart,
+        behavior: 'smooth',
+      })
+      return
+    }
+
+    if (itemEnd > viewEnd) {
+      container.scrollTo({
+        left: itemEnd - scrollableAreaWidth,
+        behavior: 'smooth',
       })
     }
   }, [activeIndex, scrollableAreaWidth])
+
 
   const totalErrors = getTotalErrorCount();
 
   if (points.length === 0) return null
 
   return (
-    <div className="fixed top-26 left-[80px] w-86 z-[1000] flex flex-col items-center">
-      <div className="relative z-[1001] -top-1 flex justify-center w-full"> 
-        <div className="flex items-center gap-1 px-10  bg-neutral-800/75 backdrop-blur-xs border border-neutral-100/35 rounded-lg text-blue-400 font-semibold text-xl">
+    <div className="left-[80px] w-86 z-[1000] hidden lg:flex flex-col items-center">
+      <div className="relative z-[1001] -top-1.5 flex justify-center w-full"> 
+        <div className="flex items-center gap-1 px-10  bg-neutral-800/75 backdrop-blur-xs border border-neutral-100/35 rounded-lg text-teal-500 font-semibold text-xl">
           <MapPin className="h-4 w-4" />
           {points.length}
           {totalErrors > 0 && (
@@ -99,14 +160,14 @@ export function PointsQuickNav() {
               const hasErrors = getValidationErrors(p).length > 0;
               
               return (
-                <div key={p.id} className="flex-shrink-0">
+                <div key={p.id} className="relative flex-shrink-0">
                   <Button
-                    onClick={() => setActive(p.id)}
+                    onClick={() => handlePointClick(p.id)}
                     className={`
-                      w-10 h-10 p-0 rounded-full text-xl font-bold 
+                      w-10 h-10 p-0 rounded-lg text-xl font-bold 
                       border transition-all duration-200
                       ${isActive 
-                        ? 'bg-blue-400 border-none text-white' 
+                        ? 'bg-teal-600 border-none text-white' 
                         : hasErrors 
                         ? 'bg-red-600/30 border-red-500 text-white hover:bg-red-600/70'
                         : 'bg-transparent border-white/50 text-white/90 hover:bg-white/10' 
@@ -115,6 +176,23 @@ export function PointsQuickNav() {
                   >
                     {idx + 1}
                   </Button>
+                  {p.actions.length > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="
+                      absolute -top-0 -right-1
+                      h-4 min-w-4 px-1
+                      flex items-center justify-center
+                      rounded-full
+                      bg-neutral-800 border border-white/30
+                      text-white
+                      pointer-events-none
+                    "
+                  >
+                    {p.actions.length}
+                  </Badge>
+                )}
+
                 </div>
               )
             })}

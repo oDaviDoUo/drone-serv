@@ -1,0 +1,274 @@
+{ 
+  "_comment": "GENERAL",
+
+  "save": "Save",
+  "saving": "Saving",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "del": "Delete",
+  "lang": "Language",
+  "loading": "Loading",
+  "notfound": "Not found",
+  "results": "Results",
+  "noresults": "No Results",
+  "search": "Search",
+  "searching" : "Searching",
+  "all": "All",
+  "info": "Info",
+  "success": "Success",
+  "warn": "Warn",
+  "err": "Error",
+  "errs": "Errors",
+  "clear": "Clear",
+
+  "km/h": "km/h",
+  "m/s": "m/s",
+  "hpa": "hPa",
+
+
+  "_comment": "AUTH",
+
+  "login": "Login",
+  "username": "Username",
+  "password": "Password",
+  "wronglogin": "Invalid credentials",
+
+
+
+  "_comment": "NAVBAR",
+
+  "file": "File",
+  "drone":"Drone",
+  "drones":"Drones",
+  "station": "Station",
+  "stations": "Stations",
+  "selectM": "Select mission",
+  "findplace": "Find a place",
+  "fullscreen": "Fullscreen",
+  "exitfullscreen": "Exit fullscreen",
+  "help": "Help",
+  "logout": "Log out",
+
+  "newM": "New Mission",
+  "openM": "Open Mission",
+  "importM": "Import Mission",
+  "exportM": "Export Mission",
+  "tutorial": "Tutorial",
+  "droneL": "Drone list",
+  "stationL": "Station list",  
+  "findM": "Search mission",
+  "addToPlan":"Add to plan",
+  "createM": "Create a mission",
+  "editM": "Edit mission",
+  "createMdesc": "Fill in the mission parameters",
+  "editMdesc": "Enter new parameters",
+  "placename": "Place name",
+
+  "delM":"Delete mission?",
+  "delMdesc":"Are you sure you want to delete",
+
+
+
+  "_comment": "SIDEBAR",
+
+  "flyzone": "Flying zones",
+  "maplayer": "Map layers",
+  "calendar": "Calendar",
+  "streams": "Streams",
+  "weather": "Weather",
+  "Alt": "Altitude",
+  "Logs": "Logs",
+
+
+
+  "_comment": "HELP",
+
+  "support": "Support",
+  "emergencycall": "Emergency Call (PAVEL)",
+  "email": "Email support",
+  "website": "Official Website",
+  "wahint": "Scan to start whatsapp chat",
+
+
+
+  "_comment": "HELPMANAGER",
+
+  "nodrones": "Drones not found",
+  "nostations": "Stations not found",
+  "managedrones": "Manage drones",
+  "managestations": "Manage stations",
+
+
+
+  "_comment": "MISSIONINFOPANEL",
+
+  "noactiveM":"No active mission",
+  "points": "Points:",
+  "totalD": "Total Distance:",
+  "missioninfohint": "Select a point from the QuickNav bar above or the map to view details.",
+  "Pname": "Point name",
+  "longitude": "Longitude ",
+  "latitude": "Latitude",
+  "basic":"Basic",
+  "actions":"Actions",
+  "alt":"Altitude",
+  "speed":"Speed",
+  "altmode":"Alt Mode",
+  "saveM": "Save Mission",
+  "delallact": "Delete all actions",
+
+
+
+  "_comment": "ACTIONS",
+
+  "photoshoott": "Photo shooting",
+  "frames": "Frames",
+  "interval": "Intervals",
+  "delay": "Delay",
+  "panorama": "Panorama",
+  "video": "Video",
+  "photo": "Photo",
+  "directionright": "direction right",
+  "directionleft": "direction left",
+  "rotate": "Rotate",
+  "anglestep": "Yaw step",
+  "anglespeed": "Yaw speed",
+  "angledelay": "Yaw step delay",
+  "wait": "Wait",
+  "waittime": "Waiting time",
+  "camerarotate": "Camera rotation",
+  "roll": "Roll",
+  "tilt": "Tilt (-90° to 90°)",
+  "yaw": "Yaw",
+  "zoom": "Zoom (optional)",
+  "camerarec": "Camera Record",
+  "recordon": "Record: On",
+  "recordoff": "Record: Off",
+
+
+
+  "_comment": "MISSIONSTARTER",
+
+  "wpprogress":"Waypoints",
+  "readycheck":"Ready check",
+  "takeoff": "Take off",
+  "land":"Land",
+  "stop": "Stop",
+  "pause": "Pause",
+  "resume": "Resume",
+
+
+
+  "_comment": "ALTITUDETAB",
+
+
+  "summalt": "Altitude ($missionname$)",
+  "rth":"RTH =",
+  "meter":"m",
+  "point":"Point",
+  "althigher":"Higher RTH",
+  
+
+
+  "_comment": "WEATHER",
+
+  "Wstation": "Weather Station",
+  "Wspeed":"Wind speed",
+  "temp":"Temperature",
+  "humidity": "Humidity",
+  "pressure": "Pressure",
+  "dewpoint": "Dew point",
+  "visibility": "Visibility",
+
+
+
+  "_comment": "LOGS",
+
+
+  "_comment": "MODALS",
+
+  "createMdescript":"Fill mission parameters",
+  "name": "Name",
+  "descript":"Description",
+  "searchdrone": "Search drone...",
+  "searchstation": "Search station...",
+  "searchcamera":"Search camera",
+  "addnewdrone": "Add new drone",
+  "addnewstation": "Add new station",
+  "preparesel": "Prepare drone",
+  "droneinfo": "Drone Info",
+  "stationinfo": "Station Info",
+  "add": "Add",
+  "adddescript":"Fill in the details to register a new device",
+  "model":"Model",
+  "btr":"Battery",
+  "serial": "Serial",
+  "status": "Status",
+  "owner": "Owner",
+  "location": "Location",
+  "stationname": "Station name",
+  "maxcap": "Max Capacity",
+  "currdocked": "Currently docked",
+  "coordinates": "Coordinates",
+  "deldescript": "button DELETE will delete your device (CANT UNDO)",
+  "active":"Active",
+  "inactive":"Inactive",
+  "back": "Back",
+  "protocol": "Protocol",
+  "bitrate":"Bitrate",
+  "latency": "Latency",
+  "fps": "FPS",
+  "returntohome": "Return to Home",
+  "hidepanel":"Hide Panel",
+  
+
+  
+  "_comment": "STATUS",
+
+  "pilot": "Pilot",
+  "operator": "Operator",
+  "admin": "Admin",
+  "available": "Available",
+  "flying": "Flying",
+  "charging": "Charging",
+  "maintenance": "Maintenance",
+  "offline": "Offline",
+  "online": "Online",
+  "live": "Live",
+  "draft": "Draft",
+  "ready": "Ready",
+  "in_progress": "In progress",
+  "completed": "Completed",
+  "failed": "Failed",
+  "cancelled": "Canceled",
+  "sent":"Sent",
+  "air":"Air",
+  "unknown":"Unknown",
+  "scheduled": "Scheduled",
+  "dispatched": "Dispatched",
+  "delayed": "Delayed",
+  "today": "Today",
+  "newevent": "New event",
+
+  "_comment": "ERRORS",
+
+  "loginFailed": "Login failed",
+  "invalidCredentials": "Wrong username or password",
+  "userNotFound": "User not found",
+  "wrongPassword": "Incorrect password",
+  "accountLocked": "Account is locked",
+  "accountDisabled": "Account is disabled",
+  "sessionExpired": "Session expired. Please log in again",
+  "tokenInvalid": "Invalid authentication token",
+  "loginRequired": "Please log in to continue",
+  "serverError": "Server error. Please try again later",
+
+  "missionNameRequired": "Mission name is required",
+  "missionRenamed": "Mission renamed",
+  "missionCreated": "Mission created",
+  "missionSaveError": "Error saving mission",
+  "missionDeleted": "Mission deleted",
+  "missionDeleteError": "Error deleting mission"
+
+
+}

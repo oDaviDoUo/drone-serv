@@ -11,7 +11,6 @@ export const newActionTemplate = (type: ActionType): PointAction => {
     switch (type) {
         case 'TakePhotosByTime':
             params = [
-                // ⚠️ Заменено null на числовые дефолты
                 { key: 'count', value: 1 },      // кол-во (число)
                 { key: 'interval', value: 10 },   // интервал (сек)
                 { key: 'delay', value: 0 },      // задержка (сек)
@@ -20,7 +19,6 @@ export const newActionTemplate = (type: ActionType): PointAction => {
         case 'Panorama':
             params = [
                 { key: 'mode', value: 'video' },    // video/photo
-                // ⚠️ Заменено null на числовые дефолты
                 { key: 'angle', value: 360 },      // угол поворота (градусы)
                 { key: 'direction', value: 'left' },// left/right
                 { key: 'step', value: 10 },       // угловой шаг
@@ -30,7 +28,7 @@ export const newActionTemplate = (type: ActionType): PointAction => {
             break;
         case 'Wait':
             params = [
-                // ⚠️ Заменено null на числовой дефолт
+               
                 { key: 'time', value: 5 },       // время ожидания (сек)
             ];
             break;
@@ -67,9 +65,52 @@ export const newPointTemplate = (lat = 56.95, lng = 24.11): MissionPoint => ({
 
 // Создаем и экспортируем хук
 // Теперь он полностью соответствует типу MissionStore
+
 export const useMissionStore = create<MissionStore>((set, get) => ({
     points: [],
     activeId: null,
+    mission: null,
+    initialPoints: [],
+    rth: 30,
+    initialRth: 30,
+
+    setMission: (mission) => {
+        // 1. Берем данные и говорим TS: "Тут может быть что угодно (unknown), мы сами проверим"
+        const rawData = mission?.missionData as unknown;
+        
+        // Переменная правильного типа
+        let parsedMissionData = rawData as { rth: number; points: MissionPoint[] } | undefined;
+        
+        // 2. Проверяем, не пришла ли строка
+        if (typeof rawData === 'string') {
+            try {
+                parsedMissionData = JSON.parse(rawData);
+            } catch (e) {
+                console.error("❌ Ошибка парсинга missionData:", e);
+                // 3. ⚠️ Вместо {} отдаем валидный по типам объект!
+                parsedMissionData = { rth: 30, points: [] };
+            }
+        }
+
+        // 4. Достаем точки и RTH
+        const points = parsedMissionData?.points || [];
+        const parsedRth = parsedMissionData?.rth;
+        const initialRth = parsedRth !== undefined && parsedRth !== null ? Number(parsedRth) : 30;
+
+        // 5. Обновляем стейт
+        set(() => ({
+            mission,
+            points,
+            rth: initialRth,
+            initialRth,
+            initialPoints: JSON.parse(JSON.stringify(points)) 
+        }));
+    },
+    setInitialPoints: (points) => set({
+        initialPoints: JSON.parse(JSON.stringify(points))
+    }),
+    setRth: (value) => set({ rth: value }),
+    setInitialRth: (value) => set({ initialRth: value }),
     addPoint: (p) => set((s) => (s.points.length < MAX_POINTS ? { points: [...s.points, p] } : s)),
     insertPointAt: (index, p) =>
         set((s) => {
